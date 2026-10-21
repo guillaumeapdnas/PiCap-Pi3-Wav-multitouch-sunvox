@@ -320,8 +320,10 @@ class SunVoxEngine:
             if d > peak:
                 peak = d
         t = max(0.0, min(1.0, peak / float(DIFF_DISPLAY_MAX)))
+        # plancher audible : au repos le filtre reste ouvert (~55 %), la
+        # pression rend la note plus brillante jusqu'au max (effet wah-wah).
         val = int(self._cutoff_lo
-                  + (self._cutoff_hi - self._cutoff_lo) * (t * t))
+                  + (self._cutoff_hi - self._cutoff_lo) * (0.55 + 0.45 * t))
         if val != self._last_cutoff:
             try:
                 sv.set_module_ctl_value(SV_SLOT, self._filter,
