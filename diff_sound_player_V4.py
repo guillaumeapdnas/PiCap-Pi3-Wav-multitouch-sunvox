@@ -83,6 +83,10 @@ CALIB_MARGIN = 2                  # marge de sécurité ajoutée au bruit mesur�
 
 # --- moteur SunVox ----------------------------------------------------------
 SV_SLOT = 0
+# Sortie audio SunVox : sortie matérielle ALSA forcée (jack = hw:0,0,
+# HDMI = hw:0,1), car PulseAudio est inaccessible au compte root utilisé
+# pour le capteur (c'est lui qui provoquait les « Broken pipe / EPIPE »).
+SV_AUDIO_CONFIG = b"buffer=1024|audiodriver=alsa|audiodevice=hw:0,0"
 SV_MODE_SYNTH = "Synthé (généré)"
 SV_MODE_SAMPLER = "Sampler (.wav)"
 SV_MODES = (SV_MODE_SYNTH, SV_MODE_SAMPLER)
@@ -173,7 +177,7 @@ class SunVoxEngine:
         self._vol_lo = 0
         self._vol_hi = 1
 
-        sv.init(None, 44100, 2, 0)     # config auto (ALSA sur le Pi)
+        sv.init(SV_AUDIO_CONFIG, 44100, 2, 0)   # sortie jack matérielle
         sv.open_slot(SV_SLOT)
         self._build()
         self.set_volume(self.volume)
